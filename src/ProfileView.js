@@ -168,6 +168,8 @@ export default function ProfileView({ data, interactive = true, compact = false,
               color: theme.textDim,
               marginBottom: compact ? 20 : 32,
               fontSize: compact ? '0.82rem' : undefined,
+              textAlign: 'center',
+              lineHeight: '1.1',
             }}
           >
             {data.bio}
