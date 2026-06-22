@@ -1,0 +1,100 @@
+export const THEMES = {
+  dark: {
+    id: 'dark',
+    label: 'Midnight',
+    swatch: ['#07080F', '#7C6BF0'],
+    bg: '#07080F',
+    surface: '#10121C',
+    card: '#181B28',
+    accent: '#7C6BF0',
+    accentText: '#07080F',
+    text: '#F4F4F5',
+    textDim: '#8B8FA3',
+    border: 'rgba(255, 255, 255, 0.07)',
+    gradient: 'radial-gradient(ellipse at 50% -20%, rgba(124, 107, 240, 0.18), transparent 60%)',
+  },
+  warm: {
+    id: 'warm',
+    label: 'Sand',
+    swatch: ['#F6F1EA', '#C45C26'],
+    bg: '#F6F1EA',
+    surface: '#EDE6DC',
+    card: '#FFFFFF',
+    accent: '#C45C26',
+    accentText: '#FFFFFF',
+    text: '#1C1917',
+    textDim: '#6B6560',
+    border: 'rgba(28, 25, 23, 0.1)',
+    gradient: 'radial-gradient(ellipse at 50% 0%, rgba(196, 92, 38, 0.08), transparent 55%)',
+  },
+  neon: {
+    id: 'neon',
+    label: 'Pulse',
+    swatch: ['#05020F', '#E040FB'],
+    bg: '#05020F',
+    surface: '#0E0820',
+    card: '#160F2E',
+    accent: '#E040FB',
+    accentText: '#FFFFFF',
+    text: '#F5EEFF',
+    textDim: '#9A8BB8',
+    border: 'rgba(224, 64, 251, 0.14)',
+    gradient: 'radial-gradient(ellipse at 50% 0%, rgba(224, 64, 251, 0.2), transparent 65%)',
+  },
+  forest: {
+    id: 'forest',
+    label: 'Forest',
+    swatch: ['#071210', '#34D399'],
+    bg: '#071210',
+    surface: '#0C1A17',
+    card: '#122420',
+    accent: '#34D399',
+    accentText: '#071210',
+    text: '#ECFDF5',
+    textDim: '#7A9A8E',
+    border: 'rgba(52, 211, 153, 0.12)',
+    gradient: 'radial-gradient(ellipse at 50% 0%, rgba(52, 211, 153, 0.15), transparent 60%)',
+  },
+  bloom: {
+    id: 'bloom',
+    label: 'Bloom',
+    swatch: ['#120810', '#FB7185'],
+    bg: '#120810',
+    surface: '#1E0F18',
+    card: '#2A1522',
+    accent: '#FB7185',
+    accentText: '#120810',
+    text: '#FFF1F2',
+    textDim: '#A88A94',
+    border: 'rgba(251, 113, 133, 0.14)',
+    gradient: 'radial-gradient(ellipse at 50% 0%, rgba(251, 113, 133, 0.18), transparent 60%)',
+  },
+};
+
+export const BUTTON_STYLES = {
+  solid: { id: 'solid', label: 'Solid' },
+  outline: { id: 'outline', label: 'Outline' },
+  glass: { id: 'glass', label: 'Glass' },
+};
+
+export const LINK_TYPES = [
+  'instagram', 'twitter', 'youtube', 'tiktok',
+  'linkedin', 'github', 'website', 'email', 'other',
+];
+
+export const BG_OVERLAY_OPACITY = {
+  dark: 0.48,
+  warm: 0.32,
+  neon: 0.55,
+  forest: 0.45,
+  bloom: 0.5,
+};
+
+export const DEFAULT_PAGE_DATA = {
+  name: '',
+  bio: '',
+  theme: 'dark',
+  buttonStyle: 'solid',
+  links: [{ type: 'instagram', label: '', url: '' }],
+  bgMedia: null,
+};
