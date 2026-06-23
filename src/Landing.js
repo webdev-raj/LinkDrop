@@ -18,16 +18,16 @@ const DEMO = {
 
 const MARQUEE = ['Creators', 'Musicians', 'Freelancers', 'Founders', 'Coaches', 'Artists', 'Writers'];
 
-const TESTIMONIALS = [
-  { quote: 'Set up my page on the train. Took four minutes.', name: 'Jordan Okonkwo', role: 'Podcast host' },
-  { quote: 'No account, no monthly bill. Just a link that works.', name: 'Priya Mehta', role: 'Design consultant' },
-  { quote: 'The glass buttons look better than tools I pay for.', name: 'Tomás Rivera', role: 'Music producer' },
-];
+// const TESTIMONIALS = [
+//   { quote: 'Set up my page on the train. Took four minutes.', name: 'Jordan Okonkwo', role: 'Podcast host' },
+//   { quote: 'No account, no monthly bill. Just a link that works.', name: 'Priya Mehta', role: 'Design consultant' },
+//   { quote: 'The glass buttons look better than tools I pay for.', name: 'Tomás Rivera', role: 'Music producer' },
+// ];
 
 export default function Landing() {
   return (
     <div className="landing">
-      <a href="#main" className="skip-link">Skip to content</a>
+      {/* <a href="#main" className="skip-link">Skip to content</a> */}
       <div className="mesh-bg" aria-hidden="true" />
       <SiteNav />
 
@@ -65,6 +65,9 @@ export default function Landing() {
 
         <div className="marquee" aria-hidden="true">
           <div className="marquee__track">
+            {[...MARQUEE, ...MARQUEE].map((item, i) => (
+              <span key={i}>{item}</span>
+            ))}
             {[...MARQUEE, ...MARQUEE].map((item, i) => (
               <span key={i}>{item}</span>
             ))}
@@ -197,25 +200,10 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="section section--quotes">
-          <div className="container">
-            <div className="quotes-grid">
-              {TESTIMONIALS.map((t) => (
-                <Reveal key={t.name} className="quote-card">
-                  <p>"{t.quote}"</p>
-                  <footer>
-                    <strong>{t.name}</strong>
-                    <span>{t.role}</span>
-                  </footer>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
 
         <section className="cta-band cta-band--premium">
           <div className="container cta-band__inner">
-            <h2>Your audience is one link away</h2>
+            <h2 id='removespace'>Your audience is one link away</h2>
             <p>Open the studio, build your page, and share it today — free, forever, no catch.</p>
             <a href="/create" className="btn btn--primary btn--glow">Create your LinkDrop page</a>
           </div>
