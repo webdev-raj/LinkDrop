@@ -5,9 +5,10 @@ import PublishedPage from './PublishedPage';
 
 export default function App() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
+  const slugMatch = path.match(/^\/p\/([a-z0-9-]+)$/i);
 
-  if (path.endsWith('/p') || path.includes('/p/')) {
-    return <PublishedPage />;
+  if (slugMatch) {
+    return <PublishedPage slug={slugMatch[1]} />;
   }
 
   if (path === '/create') {

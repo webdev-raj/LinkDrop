@@ -1,51 +1,60 @@
 # LinkDrop
 
-Free link-in-bio builder. No account, no backend database.
-Page data lives in a compressed URL hash — backgrounds upload to Cloudinary so links stay short.
+Free link-in-bio builder with short slug URLs. No account required.
+
+Pages save to **Supabase**. Background GIFs/images upload to **Cloudinary**.
 
 ## Run locally
 
 ```bash
 npm install
-cp .env.example .env   # then fill in Cloudinary keys
+cp .env.example .env   # fill in Supabase + Cloudinary keys
 npm start
 ```
 
-## Cloudinary setup (background uploads)
+## Supabase setup
 
-Background GIFs/images upload to Cloudinary instead of being embedded in the URL (which made links enormous).
+1. Create a project at [supabase.com](https://supabase.com)
+2. Run the SQL in `supabase/schema.sql` in the SQL Editor
+3. **Project Settings → API** — copy **Project URL** and **anon public** key
+4. Add to `.env`:
 
-1. Create a free account at [cloudinary.com](https://cloudinary.com)
-2. **Settings → Upload → Add upload preset**
-3. Set **Signing mode** to **Unsigned**
-4. Copy your **Cloud name** and **Upload preset name** into `.env`:
+```
+REACT_APP_SUPABASE_URL=https://xxxx.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=eyJ...
+```
+
+## Cloudinary setup (backgrounds)
+
+1. [cloudinary.com](https://cloudinary.com) → **Settings → Upload → Add preset** (unsigned, name: `linkdrop`)
+2. Dashboard **Home** → copy **Cloud name** (not the preset name)
+3. Add to `.env`:
 
 ```
 REACT_APP_CLOUDINARY_CLOUD_NAME=your_cloud_name
-REACT_APP_CLOUDINARY_UPLOAD_PRESET=your_unsigned_preset
+REACT_APP_CLOUDINARY_UPLOAD_PRESET=linkdrop
 ```
-
-5. Restart `npm start`
-
-On Vercel, add the same two variables under Project → Settings → Environment Variables.
 
 ## Deploy to Vercel
 
-1. Push to GitHub
-2. Import on [vercel.com](https://vercel.com)
-3. Add the Cloudinary env vars above
-4. Deploy
+1. Push to GitHub and import on Vercel
+2. Add all four `REACT_APP_*` env vars
+3. Deploy
 
-## How the URL works
+## How URLs work
 
-When you click **Generate my link**, profile + links are compressed (lz-string) with short keys and stored in the hash:
+**Generate my link** saves your page to Supabase and returns:
 
 ```
-yoursite.vercel.app/p#2.N4IgbghgDg...
+https://yoursite.vercel.app/p/maya-x7k2
 ```
 
-- **v2 format** (`2.` prefix) — compact + compressed (~200–800 chars typical)
-- **Legacy format** — old base64 links still work
-- **Background media** — only the Cloudinary URL is stored (~80 chars), not the image itself
+The `/p/:slug` route loads page data from the database. View counts increment automatically.
 
-The `/p` page decodes the hash and renders your profile. No server database. Free forever.
+## Studio routes
+
+| URL | Page |
+|-----|------|
+| `/` | Marketing landing |
+| `/create` | Builder studio |
+| `/p/:slug` | Published link page |

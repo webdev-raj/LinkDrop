@@ -2,7 +2,8 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   THEMES, BUTTON_STYLES, LINK_TYPES, DEFAULT_PAGE_DATA,
 } from './themes';
-import { buildShareUrl, getShareUrlLength } from './encode';
+import { savePage } from './slugify';
+import { isSupabaseConfigured } from './supabase';
 import { uploadToCloudinary, isCloudinaryConfigured } from './cloudinary';
 import ProfileView from './ProfileView';
 import SiteNav from './components/SiteNav';
@@ -163,6 +164,8 @@ export default function Builder() {
   const [tab, setTab] = useState('profile');
   const [shareUrl, setShareUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState('');
   const [previewDevice, setPreviewDevice] = useState('mobile');
 
   const set = useCallback((key, val) => setData((d) => ({ ...d, [key]: val })), []);
@@ -195,7 +198,23 @@ export default function Builder() {
   const removeLink = (i) =>
     setData((d) => ({ ...d, links: d.links.filter((_, idx) => idx !== i) }));
 
-  const generateLink = () => setShareUrl(buildShareUrl(data));
+  const generateLink = async () => {
+    if (!isSupabaseConfigured()) {
+      setGenerateError('Supabase is not configured. Add REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY to your .env file.');
+      return;
+    }
+
+    setGenerating(true);
+    setGenerateError('');
+    try {
+      const slug = await savePage(data);
+      setShareUrl(`${window.location.origin}/p/${slug}`);
+    } catch {
+      setGenerateError('Could not save page — check your connection and try again.');
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const copyLink = () => {
     navigator.clipboard.writeText(shareUrl).then(() => {
@@ -329,7 +348,7 @@ export default function Builder() {
             <>
               <header className="panel-header">
                 <h2>Publish</h2>
-                <p>Generate a shareable link — your page data lives inside the URL.</p>
+                <p>Save to Supabase and get a short link like <code className="inline-code">/p/yourname-x7k2</code></p>
               </header>
               <div className="publish-card">
                 <div className="publish-card__row">
@@ -347,18 +366,25 @@ export default function Builder() {
                   </div>
                 </div>
               </div>
-              <button type="button" className="btn btn--primary btn--full btn--glow" onClick={generateLink}>
-                Generate my link
+              <button
+                type="button"
+                className="btn btn--primary btn--full btn--glow"
+                onClick={generateLink}
+                disabled={generating}
+              >
+                {generating ? 'Saving…' : 'Generate my link'}
               </button>
+              {generateError && (
+                <p className="bg-upload__error" role="alert">{generateError}</p>
+              )}
               {shareUrl && (
                 <div className="share-result">
                   <p className="share-result__label">Your live page</p>
                   <div className="share-result__box">
                     <code className="share-result__url">{shareUrl}</code>
                   </div>
-                  <p className={`share-result__length ${getShareUrlLength(data) > 1800 ? 'share-result__length--warn' : ''}`}>
-                    {getShareUrlLength(data).toLocaleString()} characters
-                    {getShareUrlLength(data) <= 1800 ? ' · short link' : ' · still long — remove unused links or re-upload background'}
+                  <p className="share-result__length">
+                    {shareUrl.length.toLocaleString()} characters · short link
                   </p>
                   <div className="share-result__actions">
                     <button type="button" className={`btn btn--sm ${copied ? 'btn--primary' : 'btn--ghost'}`} onClick={copyLink}>
@@ -369,7 +395,7 @@ export default function Builder() {
                     </a>
                   </div>
                   <p className="share-result__tip">
-                    Backgrounds upload to Cloudinary so your link stays short. Old base64 backgrounds make URLs huge — remove and re-upload.
+                    Your page is saved in Supabase. Background media stays on Cloudinary — both keep this link short.
                   </p>
                 </div>
               )}

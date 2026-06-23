@@ -106,8 +106,8 @@ export default function Landing() {
               </Reveal>
               <Reveal className="bento__card">
                 <span className="bento__tag">Privacy</span>
-                <h3>Your data, your URL</h3>
-                <p>Profile data is encoded in the link itself. We never store your page on a server.</p>
+                <h3>Short links via Supabase</h3>
+                <p>Pages save to a database — your share URL is just linkdrop.app/p/yourname-x7k2, not a megabyte hash.</p>
               </Reveal>
               <Reveal className="bento__card">
                 <span className="bento__tag">Drafts</span>
@@ -137,7 +137,7 @@ export default function Landing() {
                   {[
                     ['Price', 'Free forever', '$5–15/mo'],
                     ['Account required', 'Never', 'Always'],
-                    ['Your data', 'In your URL', 'On their servers'],
+                    ['Your link', 'linkdrop.app/p/name-x7k2', 'Long hash URL'],
                     ['Custom GIF background', 'Yes', 'Paid tier'],
                     ['Works offline', 'Yes', 'No'],
                   ].map(([feature, us, them]) => (
