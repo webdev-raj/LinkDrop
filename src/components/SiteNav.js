@@ -1,23 +1,30 @@
 import React from 'react';
+import BrandLogo from './BrandLogo';
 
 export default function SiteNav({ variant = 'landing', showCta = true }) {
+  const isLanding = variant === 'landing';
+  const isBuilder = variant === 'builder';
+
   return (
-    <nav className="site-nav" aria-label="Main">
+    <nav
+      className={`site-nav ${isLanding ? 'site-nav--landing' : ''} ${isBuilder ? 'site-nav--studio' : ''}`}
+      aria-label="Main"
+    >
       <div className="container site-nav__inner">
-        <a href="/" className="logo">
-          <span className="logo__mark" aria-hidden="true" />
-          Link<em>Drop</em>
+        {/* <BrandLogo size={isLanding ? 'md' : 'sm'} suffix="" /> */}
+        <a href="/" className="brand-logo">
+        <h1 className="drop-header">LinkDrop</h1>
         </a>
 
-        {variant === 'landing' && (
-          <ul className="nav-links">
-            <li><a href="#product">Product</a></li>
+        {isLanding && (
+          <ul className="nav-links nav-links--landing">
+            <li><a href="#features">Features</a></li>
             <li><a href="#compare">Compare</a></li>
-            <li><a href="#how">How it works</a></li>
+            <li><a href="#start">Start</a></li>
           </ul>
         )}
 
-        {variant === 'builder' && (
+        {isBuilder && (
           <div className="nav-builder-meta">
             <span className="nav-status">
               <span className="nav-status__dot" aria-hidden="true" />
@@ -27,12 +34,18 @@ export default function SiteNav({ variant = 'landing', showCta = true }) {
         )}
 
         <div className="nav-actions">
-          {variant === 'landing' && (
-            <span className="nav-badge">Free forever</span>
+          {isBuilder && (
+            <a href="/" className="studio-back-nav">← Home</a>
+          )}
+          {isLanding && (
+            <span className="nav-badge nav-badge--landing">Free · No signup</span>
           )}
           {showCta && (
-            <a href="/create" className="btn btn--primary btn--sm">
-              {variant === 'builder' ? 'New page' : 'Start free'}
+            <a
+              href="/create"
+              className={`btn btn--sm ${isLanding || isBuilder ? 'btn--landing-primary' : 'btn--primary'}`}
+            >
+              {isBuilder ? 'New page' : 'Build free'}
             </a>
           )}
         </div>

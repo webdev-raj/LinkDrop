@@ -8,16 +8,17 @@ import { uploadToCloudinary, isCloudinaryConfigured } from './cloudinary';
 import ProfileView from './ProfileView';
 import SiteNav from './components/SiteNav';
 import SocialIcon, { getTypeLabel } from './components/SocialIcon';
+import './landing.css';
 
 const STORAGE_KEY = 'linkdrop-draft-v2';
 const ACCEPTED_BG_TYPES = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
 const MAX_BG_SIZE = 10 * 1024 * 1024;
 
 const TABS = [
-  { id: 'profile', label: 'Profile', icon: '◆' },
-  { id: 'design', label: 'Design', icon: '◇' },
-  { id: 'links', label: 'Links', icon: '▤' },
-  { id: 'publish', label: 'Publish', icon: '↗' },
+  { id: 'profile', label: 'Profile', icon: '01' },
+  { id: 'design', label: 'Design', icon: '02' },
+  { id: 'links', label: 'Links', icon: '03' },
+  { id: 'publish', label: 'Publish', icon: '04' },
 ];
 
 function Input({ label, value, onChange, placeholder, maxLength, multiline, hint }) {
@@ -231,7 +232,7 @@ export default function Builder() {
   ].reduce((a, b) => a + b, 0);
 
   return (
-    <div className="studio">
+    <div className="studio studio--drop">
       <SiteNav variant="builder" showCta={false} />
 
       <div className="studio__shell">
@@ -368,7 +369,7 @@ export default function Builder() {
               </div>
               <button
                 type="button"
-                className="btn btn--primary btn--full btn--glow"
+                className="btn btn--landing-primary btn--full"
                 onClick={generateLink}
                 disabled={generating}
               >
@@ -387,10 +388,19 @@ export default function Builder() {
                     {shareUrl.length.toLocaleString()} characters · short link
                   </p>
                   <div className="share-result__actions">
-                    <button type="button" className={`btn btn--sm ${copied ? 'btn--primary' : 'btn--ghost'}`} onClick={copyLink}>
+                    <button
+                      type="button"
+                      className={`btn btn--sm ${copied ? 'btn--landing-primary' : 'btn--landing-ghost'}`}
+                      onClick={copyLink}
+                    >
                       {copied ? 'Copied' : 'Copy link'}
                     </button>
-                    <a href={shareUrl} target="_blank" rel="noopener noreferrer" className="btn btn--sm btn--ghost">
+                    <a
+                      href={shareUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn--sm btn--landing-ghost"
+                    >
                       Open page ↗
                     </a>
                   </div>
@@ -412,8 +422,8 @@ export default function Builder() {
             </div>
           </div>
           <div className={`preview-stage preview-stage--${previewDevice}`}>
-            <div className="device-frame">
-              <div className="device-frame__bar">
+            <div className="drop-phone studio-preview__phone">
+              <div className="drop-phone__chrome">
                 <span /><span /><span />
               </div>
               <ProfileView data={data} interactive compact />

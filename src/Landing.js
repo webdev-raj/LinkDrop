@@ -2,6 +2,7 @@ import React from 'react';
 import SiteNav from './components/SiteNav';
 import Reveal from './components/Reveal';
 import ProfileView from './ProfileView';
+import './landing.css';
 
 const DEMO = {
   name: 'Maya Chen',
@@ -16,209 +17,171 @@ const DEMO = {
   ],
 };
 
-const MARQUEE = ['Creators', 'Musicians', 'Freelancers', 'Founders', 'Coaches', 'Artists', 'Writers'];
-
-// const TESTIMONIALS = [
-//   { quote: 'Set up my page on the train. Took four minutes.', name: 'Jordan Okonkwo', role: 'Podcast host' },
-//   { quote: 'No account, no monthly bill. Just a link that works.', name: 'Priya Mehta', role: 'Design consultant' },
-//   { quote: 'The glass buttons look better than tools I pay for.', name: 'Tomás Rivera', role: 'Music producer' },
-// ];
+const FEATURES = [
+  {
+    title: 'Live studio',
+    body: 'Edit on the left, preview on the right. Every change shows up instantly on a real phone frame.',
+  },
+  {
+    title: 'Five themes',
+    body: 'Midnight, Sand, Pulse, Forest, Bloom — each built for contrast on any screen size.',
+  },
+  {
+    title: 'GIF backgrounds',
+    body: 'Upload to Cloudinary. Your page gets motion; your share link stays short.',
+  },
+  {
+    title: 'Short URLs',
+    body: 'Pages save to Supabase. You get linkdrop.app/p/yourname-x7k2 — not a URL you scroll through.',
+  },
+];
 
 export default function Landing() {
   return (
-    <div className="landing">
-      {/* <a href="#main" className="skip-link">Skip to content</a> */}
-      <div className="mesh-bg" aria-hidden="true" />
+    <div className="landing landing--drop">
+      <a href="#main" className="skip-link skip-link--landing">Skip to content</a>
+
       <SiteNav />
 
       <main id="main">
-        <section className="hero hero--premium">
-          <div className="container hero__grid">
-            <div className="hero__copy">
-              <div className="pill">Free link-in-bio · No signup required</div>
-              <h1 className="hero__title">
-                The link page<br />
-                <span className="gradient-text">creators actually want.</span>
+        <section className="drop-hero">
+          <div className="container drop-hero__grid">
+            <div className="drop-hero__copy">
+              <p className="drop-eyebrow">Link-in-bio · Free forever</p>
+              <h1 className="drop-hero__title">
+                Drop your links.<br />
+                Land everywhere.
               </h1>
-              <p className="hero__lead">
-                LinkDrop is a studio-grade link page you build in minutes — custom themes,
-                GIF backgrounds, glass buttons. Your page lives in the URL. No database. No lock-in.
+              <p className="drop-hero__lead">
+                Build a sharp link page in minutes — themes, GIF backgrounds, glass buttons.
+                Publish once, share a short URL. No account, no subscription.
               </p>
-              <div className="hero__actions">
-                <a href="/create" className="btn btn--primary btn--glow">Open the studio</a>
-                <a href="#product" className="btn btn--ghost">Explore features</a>
+              <div className="drop-hero__actions">
+                <a href="/create" className="btn btn--landing-primary">Open the studio</a>
+                <a href="#features" className="btn btn--landing-ghost">See features</a>
               </div>
-              <div className="hero__metrics">
-                <div><strong>0</strong><span>Accounts needed</span></div>
-                <div><strong>5</strong><span>Premium themes</span></div>
-                <div><strong>∞</strong><span>Free forever</span></div>
-              </div>
+              <dl className="drop-stats">
+                <div>
+                  <dt>Accounts</dt>
+                  <dd>0</dd>
+                </div>
+                <div>
+                  <dt>Themes</dt>
+                  <dd>5</dd>
+                </div>
+                <div>
+                  <dt>Cost</dt>
+                  <dd>$0</dd>
+                </div>
+              </dl>
             </div>
-            <div className="hero__device">
-              <div className="device-frame device-frame--hero">
-                <div className="device-frame__bar"><span /><span /><span /></div>
+
+            <div className="drop-hero__visual">
+              <div className="drop-hero__glow" aria-hidden="true">
+                <img
+                  src={`${process.env.PUBLIC_URL}/favicon/perfecticon-removebg-preview.png`}
+                  alt=""
+                  className="drop-hero__watermark"
+                />
+              </div>
+              <div className="drop-phone">
+                <div className="drop-phone__chrome">
+                  <span /><span /><span />
+                </div>
                 <ProfileView data={DEMO} interactive={false} compact />
               </div>
+              <div className="drop-float drop-float--1" aria-hidden="true">instagram.com</div>
+              <div className="drop-float drop-float--2" aria-hidden="true">youtube.com</div>
+              <div className="drop-float drop-float--3" aria-hidden="true">your-link.bio</div>
             </div>
           </div>
         </section>
 
-        <div className="marquee" aria-hidden="true">
-          <div className="marquee__track">
-            {[...MARQUEE, ...MARQUEE].map((item, i) => (
-              <span key={i}>{item}</span>
-            ))}
-            {[...MARQUEE, ...MARQUEE].map((item, i) => (
-              <span key={i}>{item}</span>
-            ))}
-          </div>
-        </div>
+        <div className="drop-rule" aria-hidden="true" />
 
-        <section id="product" className="section">
+        <section id="features" className="drop-section">
           <div className="container">
-            <Reveal className="section-head section-head--center">
-              <p className="section-label">Product</p>
-              <h2 className="section-title">Everything you need. Nothing you don't.</h2>
-              <p className="section-desc">Built like a paid SaaS — without the subscription.</p>
+            <Reveal className="drop-section__head">
+              <h2>Built lean. Looks premium.</h2>
+              <p>Everything a paid link tool charges for — without the dashboard bloat or monthly bill.</p>
             </Reveal>
-            <div className="bento">
-              <Reveal className="bento__card bento__card--wide">
-                <span className="bento__tag">Live studio</span>
-                <h3>Edit and preview in real time</h3>
-                <p>Split-panel builder with instant mobile preview. What you see is what your audience gets.</p>
-              </Reveal>
-              <Reveal className="bento__card">
-                <span className="bento__tag">Themes</span>
-                <h3>Five curated palettes</h3>
-                <p>Midnight, Sand, Pulse, Forest, and Bloom — each tuned for contrast and readability.</p>
-              </Reveal>
-              <Reveal className="bento__card">
-                <span className="bento__tag">Media</span>
-                <h3>GIF backgrounds</h3>
-                <p>Upload a looping GIF or image behind your links. Theme-aware overlay keeps text readable.</p>
-              </Reveal>
-              <Reveal className="bento__card bento__card--tall">
-                <span className="bento__tag">Buttons</span>
-                <h3>Solid, outline, or glass</h3>
-                <p>Three link styles that feel native to your brand — switch anytime without losing your page.</p>
-                <div className="bento__mini-btns">
-                  <span className="mini-btn mini-btn--solid">Solid</span>
-                  <span className="mini-btn mini-btn--outline">Outline</span>
-                  <span className="mini-btn mini-btn--glass">Glass</span>
+            <ul className="drop-features">
+              {FEATURES.map((f, i) => (
+                <Reveal key={f.title} className="drop-feature">
+                  <span className="drop-feature__index">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <h3>{f.title}</h3>
+                    <p>{f.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section id="compare" className="drop-section drop-section--inset">
+          <div className="container">
+            <Reveal className="drop-section__head drop-section__head--center">
+              <h2>Why switch</h2>
+              <p>Same job as the big names. Fewer strings attached.</p>
+            </Reveal>
+            <Reveal className="drop-compare">
+              <div className="drop-compare__row drop-compare__row--head">
+                <span />
+                <span>LinkDrop</span>
+                <span>Typical tool</span>
+              </div>
+              {[
+                ['Price', 'Free', '$5–15/mo'],
+                ['Signup', 'Never', 'Required'],
+                ['Share URL', 'Short slug', 'Long or locked'],
+                ['GIF background', 'Included', 'Paid tier'],
+              ].map(([label, us, them]) => (
+                <div key={label} className="drop-compare__row">
+                  <span>{label}</span>
+                  <span className="drop-compare__win">{us}</span>
+                  <span>{them}</span>
                 </div>
-              </Reveal>
-              <Reveal className="bento__card">
-                <span className="bento__tag">Privacy</span>
-                <h3>Short links via Supabase</h3>
-                <p>Pages save to a database — your share URL is just linkdrop.app/p/yourname-x7k2, not a megabyte hash.</p>
-              </Reveal>
-              <Reveal className="bento__card">
-                <span className="bento__tag">Drafts</span>
-                <h3>Auto-saved locally</h3>
-                <p>Close the tab and come back — your draft waits in your browser. No account required.</p>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        <section id="compare" className="section section--elevated">
-          <div className="container">
-            <Reveal className="section-head section-head--center">
-              <p className="section-label">Compare</p>
-              <h2 className="section-title">Why people switch from paid link tools</h2>
-            </Reveal>
-            <Reveal className="compare-table-wrap">
-              <table className="compare-table">
-                <thead>
-                  <tr>
-                    <th scope="col" />
-                    <th scope="col">LinkDrop</th>
-                    <th scope="col">Typical link tool</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    ['Price', 'Free forever', '$5–15/mo'],
-                    ['Account required', 'Never', 'Always'],
-                    ['Your link', 'linkdrop.app/p/name-x7k2', 'Long hash URL'],
-                    ['Custom GIF background', 'Yes', 'Paid tier'],
-                    ['Works offline', 'Yes', 'No'],
-                  ].map(([feature, us, them]) => (
-                    <tr key={feature}>
-                      <th scope="row">{feature}</th>
-                      <td className="compare-table__win">{us}</td>
-                      <td>{them}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              ))}
             </Reveal>
           </div>
         </section>
 
-        <section id="how" className="section">
-          <div className="container">
-            <Reveal className="section-head section-head--center">
-              <p className="section-label">How it works</p>
-              <h2 className="section-title">Live in under two minutes</h2>
-            </Reveal>
-            <div className="steps steps--dark">
-              <Reveal className="step-card step-card--dark">
-                <span className="step-card__num">01</span>
-                <h3>Build in the studio</h3>
-                <p>Add your name, bio, and links across four focused tabs.</p>
-              </Reveal>
-              <Reveal className="step-card step-card--dark">
-                <span className="step-card__num">02</span>
-                <h3>Dial in the design</h3>
-                <p>Pick a theme, button style, and optional background media.</p>
-              </Reveal>
-              <Reveal className="step-card step-card--dark">
-                <span className="step-card__num">03</span>
-                <h3>Publish one link</h3>
-                <p>Copy your URL and drop it anywhere — bio, email, QR code, anywhere.</p>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        <section className="section section--pricing">
-          <div className="container">
-            <Reveal className="pricing-card">
-              <div className="pricing-card__badge">Most popular</div>
-              <h2>Free forever</h2>
-              <p className="pricing-card__price"><span>$0</span>/month</p>
-              <ul className="pricing-card__list">
+        {/* <section id="start" className="drop-section">
+          <div className="container drop-start">
+            <Reveal className="drop-start__card">
+              <h1 className="site-nav__title drop-header drop-start__logo">LinkDrop</h1>
+              <h2>Your page is two minutes away</h2>
+              <p>Name, bio, links, theme — publish a short URL you can paste anywhere.</p>
+              <ul className="drop-start__list">
                 <li>Unlimited links</li>
-                <li>5 premium themes</li>
-                <li>GIF & image backgrounds</li>
-                <li>Glass, solid & outline buttons</li>
-                <li>No account · No watermark</li>
+                <li>Cloudinary backgrounds</li>
+                <li>View counts on every page</li>
+                <li>No watermark</li>
               </ul>
-              <a href="/create" className="btn btn--primary btn--full btn--glow">Start building</a>
+              <a href="/create" className="btn btn--landing-primary btn--full">Start building</a>
             </Reveal>
           </div>
-        </section>
+        </section> */}
 
-
-        <section className="cta-band cta-band--premium">
-          <div className="container cta-band__inner">
-            <h2 id='removespace'>Your audience is one link away</h2>
-            <p>Open the studio, build your page, and share it today — free, forever, no catch.</p>
-            <a href="/create" className="btn btn--primary btn--glow">Create your LinkDrop page</a>
+        <section className="drop-cta">
+          <div className="container drop-cta__inner">
+            <h2>One link. Every platform.</h2>
+            <p>Drop it in your bio, email signature, or QR code — and move on with your day.</p>
+            <a href="/create" className="btn btn--landing-primary">Create your page</a>
           </div>
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="container site-footer__inner">
-          <a href="/" className="logo logo--sm">Link<em>Drop</em></a>
-          <p>© {new Date().getFullYear()} LinkDrop — built for creators who hate subscriptions</p>
-          <ul className="footer-links">
-            <li><a href="/create">Studio</a></li>
-            <li><a href="#product">Features</a></li>
-            <li><a href="#compare">Compare</a></li>
-          </ul>
+      <footer className="drop-footer">
+        <div className="container drop-footer__inner">
+          <h1 className="site-nav__title drop-header">LinkDrop</h1>
+          <p>© {new Date().getFullYear()} LinkDrop</p>
+          <nav className="drop-footer__links" aria-label="Footer">
+            <a href="/create">Studio</a>
+            <a href="#features">Features</a>
+            <a href="#compare">Compare</a>
+          </nav>
         </div>
       </footer>
     </div>

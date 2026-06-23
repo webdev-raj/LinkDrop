@@ -11,5 +11,5 @@ beforeAll(() => {
 
 test('renders landing page headline', () => {
   render(<App />);
-  expect(screen.getByText(/creators actually want/i)).toBeInTheDocument();
+  expect(screen.getByText(/Drop your links/i)).toBeInTheDocument();
 });
