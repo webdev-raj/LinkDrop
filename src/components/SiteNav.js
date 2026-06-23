@@ -1,5 +1,4 @@
 import React from 'react';
-import BrandLogo from './BrandLogo';
 
 export default function SiteNav({ variant = 'landing', showCta = true }) {
   const isLanding = variant === 'landing';
