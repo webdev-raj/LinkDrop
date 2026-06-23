@@ -93,6 +93,7 @@ export const BG_OVERLAY_OPACITY = {
 export const DEFAULT_PAGE_DATA = {
   name: '',
   bio: '',
+  avatar: null,
   theme: 'dark',
   buttonStyle: 'solid',
   links: [{ type: 'instagram', label: '', url: '' }],

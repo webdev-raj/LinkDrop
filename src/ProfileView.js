@@ -1,6 +1,6 @@
 import React from 'react';
 import { THEMES, BG_OVERLAY_OPACITY } from './themes';
-import { cloudinaryBackgroundUrl } from './cloudinary';
+import { cloudinaryBackgroundUrl, cloudinaryAvatarUrl } from './cloudinary';
 import SocialIcon from './components/SocialIcon';
 
 function getLinkStyles(theme, buttonStyle) {
@@ -143,7 +143,7 @@ export default function ProfileView({ data, interactive = true, compact = false,
         <div
           className="profile-avatar"
           style={{
-            background: `linear-gradient(135deg, ${theme.accent}, ${theme.accent}99)`,
+            background: data.avatar ? 'transparent' : `linear-gradient(135deg, ${theme.accent}, ${theme.accent}99)`,
             color: theme.accentText,
             boxShadow: `0 0 0 4px ${hasBgMedia ? 'rgba(0,0,0,0.25)' : theme.bg}, 0 0 0 6px ${theme.border}, 0 16px 40px ${theme.accent}33`,
             width: compact ? 64 : 92,
@@ -151,7 +151,11 @@ export default function ProfileView({ data, interactive = true, compact = false,
             fontSize: compact ? '1.4rem' : '2.1rem',
           }}
         >
-          {data.name ? data.name[0].toUpperCase() : '?'}
+          {data.avatar ? (
+            <img src={cloudinaryAvatarUrl(data.avatar)} alt="" className="profile-avatar__img" />
+          ) : (
+            data.name ? data.name[0].toUpperCase() : '?'
+          )}
         </div>
 
         <h1

@@ -120,6 +120,107 @@ function BackgroundUpload({ bgMedia, onSet, onClear }) {
   );
 }
 
+function AvatarUpload({ avatar, name, onSet, onClear }) {
+  const inputRef = useRef(null);
+  const [error, setError] = useState('');
+  const [dragging, setDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const cloudinaryReady = isCloudinaryConfigured();
+
+  const processFile = async (file) => {
+    setError('');
+    if (!file) return;
+    if (!ACCEPTED_BG_TYPES.includes(file.type)) {
+      setError('Only GIF, JPG, PNG, or WebP supported');
+      return;
+    }
+    if (file.size > MAX_BG_SIZE) {
+      setError('File too large — max 10MB');
+      return;
+    }
+    if (!cloudinaryReady) {
+      setError('Cloudinary is not configured. Configure .env file to enable uploads.');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const url = await uploadToCloudinary(file);
+      onSet(url);
+    } catch (err) {
+      setError(err.message || 'Upload failed. Try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="panel-section avatar-upload-section">
+      <label className="form-label">Profile logo / picture</label>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/gif,image/jpeg,image/png,image/webp"
+        className="bg-upload__input"
+        onChange={(e) => {
+          processFile(e.target.files?.[0]);
+          e.target.value = '';
+        }}
+        aria-label="Upload profile picture"
+      />
+      <div className="avatar-upload__container">
+        <div 
+          className={`avatar-upload__preview-circle ${dragging ? 'avatar-upload__preview-circle--drag' : ''}`}
+          onClick={() => !uploading && inputRef.current?.click()}
+          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={(e) => { e.preventDefault(); setDragging(false); processFile(e.dataTransfer.files?.[0]); }}
+        >
+          {uploading ? (
+            <span className="avatar-upload__loading">…</span>
+          ) : avatar ? (
+            <img src={avatar} alt="Avatar preview" className="avatar-upload__img" />
+          ) : (
+            <span className="avatar-upload__placeholder">
+              {name ? name[0].toUpperCase() : '?'}
+            </span>
+          )}
+          <div className="avatar-upload__hover-overlay">
+            <span>{uploading ? 'Uploading' : 'Upload'}</span>
+          </div>
+        </div>
+        <div className="avatar-upload__actions">
+          <div className="avatar-upload__buttons">
+            <button
+              type="button"
+              className="btn btn--sm btn--ghost"
+              onClick={() => inputRef.current?.click()}
+              disabled={uploading}
+            >
+              {avatar ? 'Change photo' : 'Upload photo'}
+            </button>
+            {avatar && (
+              <button
+                type="button"
+                className="bg-upload__remove"
+                onClick={onClear}
+                disabled={uploading}
+                style={{ marginLeft: 8 }}
+              >
+                Remove
+              </button>
+            )}
+          </div>
+          <p className="avatar-upload__hint">
+            {cloudinaryReady ? 'Drop image or click to upload. GIF supported.' : 'Configure .env to enable uploads.'}
+          </p>
+        </div>
+      </div>
+      {error && <p className="bg-upload__error" role="alert">{error}</p>}
+    </div>
+  );
+}
+
 function LinkRow({ link, index, total, onChange, onRemove, onMove }) {
   return (
     <div className="link-row">
@@ -268,6 +369,12 @@ export default function Builder() {
                 <h2>Profile</h2>
                 <p>How visitors see you at the top of your page.</p>
               </header>
+              <AvatarUpload
+                avatar={data.avatar}
+                name={data.name}
+                onSet={(val) => set('avatar', val)}
+                onClear={() => set('avatar', null)}
+              />
               <Input label="Display name" value={data.name} onChange={(v) => set('name', v)} placeholder="Maya Chen" maxLength={40} />
               <Input label="Bio" value={data.bio} onChange={(v) => set('bio', v)} placeholder="Photographer & travel writer. Currently in Lisbon." maxLength={120} multiline hint={`${data.bio.length}/120 characters`} />
             </>

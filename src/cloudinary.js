@@ -41,3 +41,10 @@ export function cloudinaryBackgroundUrl(url) {
 
   return url.replace('/upload/', '/upload/f_auto,q_auto/');
 }
+
+/** Optimized delivery URL for profile avatars (resize to 200x200, face crop, auto format/quality). */
+export function cloudinaryAvatarUrl(url) {
+  if (!url || !url.includes('res.cloudinary.com')) return url;
+
+  return url.replace('/upload/', '/upload/w_200,h_200,c_fill,g_face,f_auto,q_auto/');
+}

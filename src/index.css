@@ -696,6 +696,98 @@ textarea.form-input { resize: vertical; min-height: 88px; }
   }
 }
 
+
+/* Custom Profile Avatar Image and Upload UI */
+.profile-avatar__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.avatar-upload-section {
+  margin-bottom: 24px;
+}
+.avatar-upload__container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 8px;
+}
+.avatar-upload__preview-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 22px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s var(--ease);
+}
+.avatar-upload__preview-circle:hover,
+.avatar-upload__preview-circle--drag {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.avatar-upload__preview-circle--drag {
+  background: var(--accent-soft);
+}
+.avatar-upload__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.avatar-upload__placeholder {
+  font-family: var(--display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+.avatar-upload__loading {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+.avatar-upload__hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+.avatar-upload__preview-circle:hover .avatar-upload__hover-overlay {
+  opacity: 1;
+}
+.avatar-upload__hover-overlay span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #FFF;
+}
+.avatar-upload__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.avatar-upload__buttons {
+  display: flex;
+  align-items: center;
+}
+.avatar-upload__hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -705,3 +797,4 @@ textarea.form-input { resize: vertical; min-height: 88px; }
   .reveal { opacity: 1; transform: none; }
   .marquee__track { animation: none; }
 }
+
