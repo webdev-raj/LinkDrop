@@ -221,8 +221,6 @@ export default function ProfileView({ data, interactive = true, compact = false,
       className={compact ? 'preview-phone' : 'profile-page'}
       style={{
         background: pageBg,
-        position: hasBgMedia && compact ? 'relative' : undefined,
-        overflow: hasBgMedia && compact ? 'hidden' : undefined,
         ...(compact ? {} : { minHeight: '100dvh' }),
       }}
     >

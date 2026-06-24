@@ -385,18 +385,37 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .profile-footer__sep { opacity: 0.4; }
 
 .bg-media--contained {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; z-index: 0;
+  position: absolute;
+  inset: 0;
+  /* Override the global img { max-width: 100% } reset */
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover;
+  z-index: 0;
+  display: block;
 }
 .bg-media__overlay--contained {
-  position: absolute; inset: 0; z-index: 1;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 .bg-media--fixed {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  object-fit: cover; z-index: -2;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -2;
 }
 .bg-media__overlay--fixed {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
 }
 
 @keyframes link-drop {
@@ -406,7 +425,13 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .profile-link--animate { animation: link-drop 0.5s var(--ease) both; }
 
 .preview-phone {
-  padding: 24px 18px; min-height: 400px; border: none; border-radius: 0;
+  padding: 24px 18px;
+  min-height: 400px;
+  border: none;
+  border-radius: 0;
+  /* Always a positioned container so bg-media--contained anchors here */
+  position: relative;
+  overflow: hidden;
 }
 
 /* ── Studio Builder ── */
