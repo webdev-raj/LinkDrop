@@ -1,7 +1,9 @@
 import React from 'react';
-import { THEMES, BG_OVERLAY_OPACITY } from './themes';
+import { THEMES } from './themes';
 import { cloudinaryBackgroundUrl, cloudinaryAvatarUrl } from './cloudinary';
 import SocialIcon from './components/SocialIcon';
+
+/* ─── Link button styles ─────────────────────────────────────────────── */
 
 function getLinkStyles(theme, buttonStyle) {
   const base = {
@@ -34,6 +36,8 @@ function getLinkStyles(theme, buttonStyle) {
 
   return base[buttonStyle] || base.solid;
 }
+
+/* ─── Single link row ────────────────────────────────────────────────── */
 
 function ProfileLink({ link, theme, interactive, animate, index, buttonStyle }) {
   const href = link.url
@@ -93,143 +97,243 @@ function ProfileLink({ link, theme, interactive, animate, index, buttonStyle }) 
   );
 }
 
-function BackgroundMedia({ src, themeId, compact }) {
-  const opacity = BG_OVERLAY_OPACITY[themeId] ?? BG_OVERLAY_OPACITY.dark;
-  const overlayStyle = { background: `rgba(0, 0, 0, ${opacity})` };
-
-  if (compact) {
-    return (
-      <>
-        <img src={src} alt="" aria-hidden="true" className="bg-media bg-media--contained" />
-        <div aria-hidden="true" className="bg-media__overlay bg-media__overlay--contained" style={overlayStyle} />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <img src={src} alt="" aria-hidden="true" className="bg-media bg-media--fixed" />
-      <div aria-hidden="true" className="bg-media__overlay bg-media__overlay--fixed" style={overlayStyle} />
-    </>
-  );
-}
+/* ─── Main ProfileView ───────────────────────────────────────────────── */
 
 export default function ProfileView({ data, interactive = true, compact = false, animate = false }) {
   const theme = THEMES[data.theme] || THEMES.dark;
-  const themeId = data.theme || 'dark';
   const hasBgMedia = Boolean(data.bgMedia);
   const bgSrc = hasBgMedia ? cloudinaryBackgroundUrl(data.bgMedia) : null;
   const buttonStyle = data.buttonStyle || 'solid';
 
-  const pageBg = hasBgMedia
-    ? 'transparent'
-    : theme.gradient
-      ? `${theme.gradient}, ${theme.bg}`
-      : theme.bg;
-
   const links = (data.links || []).filter((l) => (interactive ? (l.url || l.label) : l.url));
-  const contentZIndex = hasBgMedia ? 2 : undefined;
 
-  const profileContent = (
-    <>
+  /* ── Compact mode: builder preview inside phone frame ── */
+  if (compact) {
+    const pageBg = hasBgMedia
+      ? 'transparent'
+      : theme.gradient
+        ? `${theme.gradient}, ${theme.bg}`
+        : theme.bg;
+
+    return (
       <div
-        className="profile-card"
-        style={{
-          ...(compact ? { maxWidth: '100%' } : undefined),
-          position: hasBgMedia ? 'relative' : undefined,
-          zIndex: contentZIndex,
-        }}
+        className="preview-phone"
+        style={{ background: pageBg, position: 'relative', overflow: 'hidden' }}
       >
-        <div
-          className="profile-avatar"
-          style={{
-            background: data.avatar ? 'transparent' : `linear-gradient(135deg, ${theme.accent}, ${theme.accent}99)`,
-            color: theme.accentText,
-            boxShadow: `0 0 0 4px ${hasBgMedia ? 'rgba(0,0,0,0.25)' : theme.bg}, 0 0 0 6px ${theme.border}, 0 16px 40px ${theme.accent}33`,
-            width: compact ? 64 : 92,
-            height: compact ? 64 : 92,
-            fontSize: compact ? '1.4rem' : '2.1rem',
-          }}
-        >
-          {data.avatar ? (
-            <img src={cloudinaryAvatarUrl(data.avatar)} alt="" className="profile-avatar__img" />
-          ) : (
-            data.name ? data.name[0].toUpperCase() : '?'
-          )}
-        </div>
-
-        <h1
-          className="profile-name"
-          style={{ color: theme.text, fontSize: compact ? '1.15rem' : undefined }}
-        >
-          {data.name || 'Your name'}
-        </h1>
-
-        {data.bio && (
-          <p
-            className="profile-bio"
-            style={{
-              color: theme.textDim,
-              marginBottom: compact ? 20 : 32,
-              fontSize: compact ? '0.82rem' : undefined,
-              textAlign: 'center',
-              lineHeight: '1.1',
-            }}
-          >
-            {data.bio}
-          </p>
+        {/* GIF inside the phone frame */}
+        {hasBgMedia && (
+          <>
+            <img
+              src={bgSrc}
+              alt=""
+              aria-hidden="true"
+              className="bg-media bg-media--contained"
+            />
+            <div
+              aria-hidden="true"
+              className="bg-media__overlay bg-media__overlay--contained"
+              style={{ background: 'rgba(0,0,0,0.45)' }}
+            />
+          </>
         )}
 
-        <div className="profile-links">
-          {links.map((link, i) => (
-            <ProfileLink
-              key={i}
-              link={link}
-              theme={theme}
-              interactive={interactive}
-              animate={animate}
-              index={i}
-              buttonStyle={buttonStyle}
-            />
-          ))}
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <div className="profile-card" style={{ maxWidth: '100%' }}>
+            <div
+              className="profile-avatar"
+              style={{
+                background: data.avatar
+                  ? 'transparent'
+                  : `linear-gradient(135deg, ${theme.accent}, ${theme.accent}99)`,
+                color: theme.accentText,
+                boxShadow: `0 0 0 4px ${hasBgMedia ? 'rgba(0,0,0,0.25)' : theme.bg}, 0 0 0 6px ${theme.border}`,
+                width: 64,
+                height: 64,
+                fontSize: '1.4rem',
+              }}
+            >
+              {data.avatar ? (
+                <img src={cloudinaryAvatarUrl(data.avatar)} alt="" className="profile-avatar__img" />
+              ) : (
+                data.name ? data.name[0].toUpperCase() : '?'
+              )}
+            </div>
+
+            <h1
+              className="profile-name"
+              style={{ color: theme.text, fontSize: '1.15rem' }}
+            >
+              {data.name || 'Your name'}
+            </h1>
+
+            {data.bio && (
+              <p
+                className="profile-bio"
+                style={{
+                  color: theme.textDim,
+                  marginBottom: 20,
+                  fontSize: '0.82rem',
+                  textAlign: 'center',
+                  lineHeight: '1.1',
+                }}
+              >
+                {data.bio}
+              </p>
+            )}
+
+            <div className="profile-links">
+              {links.map((link, i) => (
+                <ProfileLink
+                  key={i}
+                  link={link}
+                  theme={theme}
+                  interactive={interactive}
+                  animate={animate}
+                  index={i}
+                  buttonStyle={buttonStyle}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Full published page ── */
+  return (
+    <div
+      className="profile-page"
+      style={{
+        minHeight: '100vh',
+        background: '#0D0D0D',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px 20px 0px',
+      }}
+    >
+      {/* Card — GIF is clipped inside by overflow:hidden */}
+      <div
+        style={{
+          position: 'relative',
+          height: '85vh',
+          width: '100%',
+          maxWidth: '480px',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: '40px 24px',
+          background: hasBgMedia ? 'transparent' : theme.card,
+        }}
+      >
+        {/* Layer 0: GIF */}
+        {hasBgMedia && (
+          <img
+            src={bgSrc}
+            alt=""
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: 0,
+            }}
+          />
+        )}
+
+        {/* Layer 1: Dark overlay */}
+        {hasBgMedia && (
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: 'rgba(0,0,0,0.45)',
+              zIndex: 1,
+            }}
+          />
+        )}
+
+        {/* Layer 2: Content */}
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          {/* Avatar */}
+          <div
+            className="profile-avatar"
+            style={{
+              background: data.avatar
+                ? 'transparent'
+                : `linear-gradient(135deg, ${theme.accent}, ${theme.accent}99)`,
+              color: theme.accentText,
+              boxShadow: `0 0 0 4px ${hasBgMedia ? 'rgba(0,0,0,0.3)' : theme.bg}, 0 0 0 6px ${theme.border}, 0 16px 40px ${theme.accent}33`,
+              width: 92,
+              height: 92,
+              fontSize: '2.1rem',
+            }}
+          >
+            {data.avatar ? (
+              <img src={cloudinaryAvatarUrl(data.avatar)} alt="" className="profile-avatar__img" />
+            ) : (
+              data.name ? data.name[0].toUpperCase() : '?'
+            )}
+          </div>
+
+          <h1
+            className="profile-name"
+            style={{ color: hasBgMedia ? '#ffffff' : theme.text }}
+          >
+            {data.name || 'Your name'}
+          </h1>
+
+          {data.bio && (
+            <p
+              className="profile-bio"
+              style={{
+                color: hasBgMedia ? 'rgba(255,255,255,0.78)' : theme.textDim,
+                marginBottom: 32,
+                textAlign: 'center',
+                lineHeight: '1.5',
+              }}
+            >
+              {data.bio}
+            </p>
+          )}
+
+          <div className="profile-links" style={{ width: '100%' }}>
+            {links.map((link, i) => (
+              <ProfileLink
+                key={i}
+                link={link}
+                theme={theme}
+                interactive={interactive}
+                animate={animate}
+                index={i}
+                buttonStyle={buttonStyle}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
-      {!compact && (
-        <p
-          className="profile-footer"
-          style={{
-            color: theme.textDim,
-            position: hasBgMedia ? 'relative' : undefined,
-            zIndex: contentZIndex,
-          }}
-        >
-          <a href="/create" className="profile-footer__cta" style={{ color: theme.accent }}>
-            Create your page
-          </a>
-          <span className="profile-footer__sep">·</span>
-          <a href="/" style={{ color: theme.textDim }}>
-            LinkDrop
-          </a>
-        </p>
-      )}
-    </>
-  );
-
-  return (
-    <div
-      className={compact ? 'preview-phone' : 'profile-page'}
-      style={{
-        background: pageBg,
-        ...(compact ? {} : { minHeight: '100dvh' }),
-      }}
-    >
-      {hasBgMedia && <BackgroundMedia src={bgSrc} themeId={themeId} compact={compact} />}
-      {hasBgMedia && compact ? (
-        <div style={{ position: 'relative', zIndex: contentZIndex }}>{profileContent}</div>
-      ) : (
-        profileContent
-      )}
+      {/* Footer — sits below the card on the dark page bg */}
+      <p
+        className="profile-footer"
+        style={{ color: 'rgba(255,255,255,0.3)', marginTop: 24 }}
+      >
+        <a href="/create" className="profile-footer__cta" style={{ color: 'rgba(255,255,255,0.45)' }}>
+          Create your page
+        </a>
+        <span className="profile-footer__sep">·</span>
+        <a href="/" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          LinkDrop
+        </a>
+      </p>
     </div>
   );
 }
