@@ -202,30 +202,11 @@ export default function ProfileView({ data, interactive = true, compact = false,
 
   /* ── Full published page ── */
   return (
-    <div
-      className="profile-page"
-      style={{
-        minHeight: '100vh',
-        background: '#0D0D0D',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px 20px 0px',
-      }}
-    >
-      {/* Card — GIF is clipped inside by overflow:hidden */}
+    <div className="profile-page">
+      {/* Card — GIF clipped inside by overflow:hidden */}
       <div
-        style={{
-          position: 'relative',
-          height: '85vh',
-          width: '100%',
-          maxWidth: '480px',
-          borderRadius: '24px',
-          overflow: 'hidden',
-          padding: '40px 24px',
-          background: hasBgMedia ? 'transparent' : theme.card,
-        }}
+        className="profile-pub-card"
+        style={{ background: hasBgMedia ? 'transparent' : theme.card }}
       >
         {/* Layer 0: GIF */}
         {hasBgMedia && (
@@ -261,8 +242,8 @@ export default function ProfileView({ data, interactive = true, compact = false,
           />
         )}
 
-        {/* Layer 2: Content */}
-        <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+        {/* Layer 2: Content — scrollable */}
+        <div className="profile-pub-content">
           {/* Avatar */}
           <div
             className="profile-avatar"
@@ -308,6 +289,7 @@ export default function ProfileView({ data, interactive = true, compact = false,
           <div className="profile-links" style={{ width: '100%' }}>
             {links.map((link, i) => (
               <ProfileLink
+                className="profile-links-item"
                 key={i}
                 link={link}
                 theme={theme}
@@ -321,10 +303,10 @@ export default function ProfileView({ data, interactive = true, compact = false,
         </div>
       </div>
 
-      {/* Footer — sits below the card on the dark page bg */}
+      {/* Footer */}
       <p
         className="profile-footer"
-        style={{ color: 'rgba(255,255,255,0.3)', marginTop: 24 }}
+        style={{ color: 'rgba(255,255,255,0.3)' }}
       >
         <a href="/create" className="profile-footer__cta" style={{ color: 'rgba(255,255,255,0.45)' }}>
           Create your page
