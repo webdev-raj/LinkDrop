@@ -1,27 +1,31 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
-  THEMES, BUTTON_STYLES, LINK_TYPES, DEFAULT_PAGE_DATA,
+  LINK_TYPES, DEFAULT_PAGE_DATA,
 } from './themes';
-import { savePage } from './slugify';
-import { isSupabaseConfigured } from './supabase';
 import { uploadToCloudinary, isCloudinaryConfigured } from './cloudinary';
 import ProfileView from './ProfileView';
 import SiteNav from './components/SiteNav';
 import SocialIcon, { getTypeLabel } from './components/SocialIcon';
+import ProfileStep from './steps/ProfileStep';
+import DesignStep from './steps/DesignStep';
+import LinksStep from './steps/LinksStep';
+import PublishStep from './steps/PublishStep';
 import './landing.css';
 
-const STORAGE_KEY = 'linkdrop-draft-v2';
+const STORAGE_KEY = 'linkdrop_draft';
 const ACCEPTED_BG_TYPES = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
 const MAX_BG_SIZE = 10 * 1024 * 1024;
 
-const TABS = [
-  { id: 'profile', label: 'Profile', icon: '01' },
-  { id: 'design', label: 'Design', icon: '02' },
-  { id: 'links', label: 'Links', icon: '03' },
-  { id: 'publish', label: 'Publish', icon: '04' },
+const STEPS = [
+  { id: 'profile', label: 'Profile', icon: '01', path: '/create/profile' },
+  { id: 'design', label: 'Design', icon: '02', path: '/create/design' },
+  { id: 'links', label: 'Links', icon: '03', path: '/create/links' },
+  { id: 'publish', label: 'Publish', icon: '04', path: '/create/publish' },
 ];
 
-function Input({ label, value, onChange, placeholder, maxLength, multiline, hint }) {
+/* ── Shared form components (exported for step files) ─────────────────── */
+
+export function Input({ label, value, onChange, placeholder, maxLength, multiline, hint }) {
   const Tag = multiline ? 'textarea' : 'input';
   return (
     <div className="form-group">
@@ -39,7 +43,7 @@ function Input({ label, value, onChange, placeholder, maxLength, multiline, hint
   );
 }
 
-function BackgroundUpload({ bgMedia, onSet, onClear }) {
+export function BackgroundUpload({ bgMedia, onSet, onClear }) {
   const inputRef = useRef(null);
   const [error, setError] = useState('');
   const [dragging, setDragging] = useState(false);
@@ -120,7 +124,7 @@ function BackgroundUpload({ bgMedia, onSet, onClear }) {
   );
 }
 
-function AvatarUpload({ avatar, name, onSet, onClear }) {
+export function AvatarUpload({ avatar, name, onSet, onClear }) {
   const inputRef = useRef(null);
   const [error, setError] = useState('');
   const [dragging, setDragging] = useState(false);
@@ -221,7 +225,7 @@ function AvatarUpload({ avatar, name, onSet, onClear }) {
   );
 }
 
-function LinkRow({ link, index, total, onChange, onRemove, onMove }) {
+export function LinkRow({ link, index, total, onChange, onRemove, onMove }) {
   return (
     <div className="link-row">
       <div className="link-row__top">
@@ -251,6 +255,8 @@ function LinkRow({ link, index, total, onChange, onRemove, onMove }) {
   );
 }
 
+/* ── Load / Save helpers ─────────────────────────────────────────────── */
+
 function loadDraft() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -261,96 +267,93 @@ function loadDraft() {
   }
 }
 
-export default function Builder() {
+function hasDraftInStorage() {
+  try {
+    return Boolean(localStorage.getItem(STORAGE_KEY));
+  } catch {
+    return false;
+  }
+}
+
+/* ── Builder layout shell ─────────────────────────────────────────────── */
+
+export default function Builder({ step = 'profile' }) {
   const [data, setData] = useState(loadDraft);
-  const [tab, setTab] = useState('profile');
-  const [shareUrl, setShareUrl] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [generating, setGenerating] = useState(false);
-  const [generateError, setGenerateError] = useState('');
   const [previewDevice, setPreviewDevice] = useState('mobile');
+  const [currentStep, setCurrentStep] = useState(step);
+  const [draftExists, setDraftExists] = useState(hasDraftInStorage);
 
-  const set = useCallback((key, val) => setData((d) => ({ ...d, [key]: val })), []);
-
+  // Persist to localStorage on every data change
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    setDraftExists(true);
   }, [data]);
 
-  const updateLink = useCallback((index, key, val) => {
-    setData((d) => {
-      const links = [...d.links];
-      links[index] = { ...links[index], [key]: val };
-      return { ...d, links };
-    });
+  // Listen for popstate to update step without full reload
+  useEffect(() => {
+    const onPop = () => {
+      const path = window.location.pathname.replace(/\/$/, '');
+      const match = path.match(/^\/create\/(\w+)$/);
+      setCurrentStep(match ? match[1] : 'profile');
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
   }, []);
 
-  const moveLink = (index, dir) => {
-    setData((d) => {
-      const links = [...d.links];
-      const next = index + dir;
-      if (next < 0 || next >= links.length) return d;
-      [links[index], links[next]] = [links[next], links[index]];
-      return { ...d, links };
-    });
-  };
+  // Navigation helpers
+  const stepIds = STEPS.map((s) => s.id);
+  const currentIndex = stepIds.indexOf(currentStep);
 
-  const addLink = () =>
-    setData((d) => ({ ...d, links: [...d.links, { type: 'other', label: '', url: '' }] }));
-
-  const removeLink = (i) =>
-    setData((d) => ({ ...d, links: d.links.filter((_, idx) => idx !== i) }));
-
-  const generateLink = async () => {
-    if (!isSupabaseConfigured()) {
-      setGenerateError('Supabase is not configured. Add REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY to your .env file.');
-      return;
+  const navigateTo = useCallback((stepId) => {
+    const target = STEPS.find((s) => s.id === stepId);
+    if (target) {
+      window.history.pushState(null, '', target.path);
+      setCurrentStep(stepId);
     }
+  }, []);
 
-    setGenerating(true);
-    setGenerateError('');
-    try {
-      const slug = await savePage(data);
-      setShareUrl(`${window.location.origin}/p/${slug}`);
-    } catch {
-      setGenerateError('Could not save page — check your connection and try again.');
-    } finally {
-      setGenerating(false);
+  const goNext = useCallback(() => {
+    if (currentIndex < stepIds.length - 1) {
+      navigateTo(stepIds[currentIndex + 1]);
     }
-  };
+  }, [currentIndex, stepIds, navigateTo]);
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+  const goPrev = useCallback(() => {
+    if (currentIndex > 0) {
+      navigateTo(stepIds[currentIndex - 1]);
+    }
+  }, [currentIndex, stepIds, navigateTo]);
 
-  const filledLinks = data.links.filter((l) => l.url || l.label).length;
+  // Progress counter: X/4
   const progress = [
-    data.name ? 1 : 0,
-    data.bio ? 1 : 0,
-    filledLinks > 0 ? 1 : 0,
+    data.name.trim() ? 1 : 0,        // profile: name non-empty
+    1,                                  // design: always true (default theme)
+    data.links.some((l) => l.url) ? 1 : 0,  // links: ≥1 with URL
+    1,                                  // publish: always available
   ].reduce((a, b) => a + b, 0);
+
+  // Step component props
+  const stepProps = { data, setData, goNext, goPrev };
 
   return (
     <div className="studio studio--drop">
-      <SiteNav variant="builder" showCta={false} />
+      <SiteNav variant="builder" showCta={false} hasDraft={draftExists} />
 
       <div className="studio__shell">
         <aside className="studio-sidebar" aria-label="Editor sections">
           <div className="studio-sidebar__head">
             <p className="studio-sidebar__label">Studio</p>
-            <div className="progress-ring" aria-label={`${progress} of 3 profile steps complete`}>
-              <span>{progress}/3</span>
+            <div className="progress-ring" aria-label={`${progress} of 4 steps complete`}>
+              <span>{progress}/4</span>
             </div>
           </div>
           <nav className="studio-tabs">
-            {TABS.map((t) => (
+            {STEPS.map((t) => (
               <button
                 key={t.id}
                 type="button"
-                className={`studio-tab ${tab === t.id ? 'studio-tab--active' : ''}`}
-                onClick={() => setTab(t.id)}
+                className={`studio-tab ${currentStep === t.id ? 'studio-tab--active' : ''}`}
+                onClick={() => navigateTo(t.id)}
               >
                 <span className="studio-tab__icon" aria-hidden="true">{t.icon}</span>
                 {t.label}
@@ -363,161 +366,10 @@ export default function Builder() {
         </aside>
 
         <section className="studio-panel" aria-label="Editor">
-          {tab === 'profile' && (
-            <>
-              <header className="panel-header">
-                <h2>Profile</h2>
-                <p>How visitors see you at the top of your page.</p>
-              </header>
-              <AvatarUpload
-                avatar={data.avatar}
-                name={data.name}
-                onSet={(val) => set('avatar', val)}
-                onClear={() => set('avatar', null)}
-              />
-              <Input label="Display name" value={data.name} onChange={(v) => set('name', v)} placeholder="Maya Chen" maxLength={40} />
-              <Input label="Bio" value={data.bio} onChange={(v) => set('bio', v)} placeholder="Photographer & travel writer. Currently in Lisbon." maxLength={120} multiline hint={`${data.bio.length}/120 characters`} />
-            </>
-          )}
-
-          {tab === 'design' && (
-            <>
-              <header className="panel-header">
-                <h2>Design</h2>
-                <p>Theme, button style, and optional background media.</p>
-              </header>
-              <div className="panel-section">
-                <h3 className="panel-title">Color theme</h3>
-                <div className="theme-swatches" role="group" aria-label="Choose theme">
-                  {Object.values(THEMES).map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      className={`theme-swatch ${data.theme === t.id ? 'theme-swatch--active' : ''}`}
-                      onClick={() => set('theme', t.id)}
-                      title={t.label}
-                    >
-                      <span className="theme-swatch__preview" style={{ background: t.swatch[0] }}>
-                        <span style={{ background: t.swatch[1] }} />
-                      </span>
-                      <span className="theme-swatch__label">{t.label}</span>
-                    </button>
-                  ))}
-                </div>
-                {data.bgMedia && (
-                  <p className="theme-bg-note">Theme affects overlay color behind your background</p>
-                )}
-              </div>
-              <div className="panel-section">
-                <h3 className="panel-title">Button style</h3>
-                <div className="style-picker">
-                  {Object.values(BUTTON_STYLES).map((s) => (
-                    <button
-                      key={s.id}
-                      type="button"
-                      className={`style-chip ${data.buttonStyle === s.id ? 'style-chip--active' : ''}`}
-                      onClick={() => set('buttonStyle', s.id)}
-                    >
-                      {s.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <BackgroundUpload
-                bgMedia={data.bgMedia}
-                onSet={(val) => set('bgMedia', val)}
-                onClear={() => set('bgMedia', null)}
-              />
-            </>
-          )}
-
-          {tab === 'links' && (
-            <>
-              <header className="panel-header">
-                <h2>Links</h2>
-                <p>Add every destination you want one tap away.</p>
-              </header>
-              {data.links.map((link, i) => (
-                <LinkRow
-                  key={i}
-                  link={link}
-                  index={i}
-                  total={data.links.length}
-                  onChange={updateLink}
-                  onRemove={removeLink}
-                  onMove={moveLink}
-                />
-              ))}
-              <button type="button" className="add-link-btn" onClick={addLink}>+ Add another link</button>
-            </>
-          )}
-
-          {tab === 'publish' && (
-            <>
-              <header className="panel-header">
-                <h2>Publish</h2>
-                <p>Save to Supabase and get a short link like <code className="inline-code">/p/yourname-x7k2</code></p>
-              </header>
-              <div className="publish-card">
-                <div className="publish-card__row">
-                  <span className="publish-card__stat">{filledLinks}</span>
-                  <div>
-                    <strong>Links ready</strong>
-                    <p>Each link with a URL will appear on your page.</p>
-                  </div>
-                </div>
-                <div className="publish-card__row">
-                  <span className="publish-card__stat">{data.theme}</span>
-                  <div>
-                    <strong>Active theme</strong>
-                    <p>{THEMES[data.theme]?.label || 'Midnight'} · {BUTTON_STYLES[data.buttonStyle]?.label || 'Solid'} buttons</p>
-                  </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                className="btn btn--landing-primary btn--full"
-                onClick={generateLink}
-                disabled={generating}
-              >
-                {generating ? 'Saving…' : 'Generate my link'}
-              </button>
-              {generateError && (
-                <p className="bg-upload__error" role="alert">{generateError}</p>
-              )}
-              {shareUrl && (
-                <div className="share-result">
-                  <p className="share-result__label">Your live page</p>
-                  <div className="share-result__box">
-                    <code className="share-result__url">{shareUrl}</code>
-                  </div>
-                  <p className="share-result__length">
-                    {shareUrl.length.toLocaleString()} characters · short link
-                  </p>
-                  <div className="share-result__actions">
-                    <button
-                      type="button"
-                      className={`btn btn--sm ${copied ? 'btn--landing-primary' : 'btn--landing-ghost'}`}
-                      onClick={copyLink}
-                    >
-                      {copied ? 'Copied' : 'Copy link'}
-                    </button>
-                    <a
-                      href={shareUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn--sm btn--landing-ghost"
-                    >
-                      Open page ↗
-                    </a>
-                  </div>
-                  <p className="share-result__tip">
-                    Your page is saved in Supabase. Background media stays on Cloudinary — both keep this link short.
-                  </p>
-                </div>
-              )}
-            </>
-          )}
+          {currentStep === 'profile' && <ProfileStep {...stepProps} />}
+          {currentStep === 'design' && <DesignStep {...stepProps} />}
+          {currentStep === 'links' && <LinksStep {...stepProps} />}
+          {currentStep === 'publish' && <PublishStep {...stepProps} />}
         </section>
 
         <aside className="studio-preview" aria-label="Live preview">

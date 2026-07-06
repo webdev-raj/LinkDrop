@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function SiteNav({ variant = 'landing', showCta = true }) {
+export default function SiteNav({ variant = 'landing', showCta = true, hasDraft = false }) {
   const isLanding = variant === 'landing';
   const isBuilder = variant === 'builder';
 
@@ -23,7 +23,7 @@ export default function SiteNav({ variant = 'landing', showCta = true }) {
           </ul>
         )}
 
-        {isBuilder && (
+        {isBuilder && hasDraft && (
           <div className="nav-builder-meta">
             <span className="nav-status">
               <span className="nav-status__dot" aria-hidden="true" />
