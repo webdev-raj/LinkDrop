@@ -88,6 +88,7 @@ export default function PublishStep({ data, goPrev }) {
         className="btn btn--landing-primary btn--full"
         onClick={generateLink}
         disabled={generating}
+        data-tourkit="publish-btn"
       >
         {generating ? 'Saving…' : 'Generate my link'}
       </button>

@@ -13,7 +13,7 @@ export default function DesignStep({ data, setData, goNext, goPrev }) {
       </header>
       <div className="panel-section">
         <h3 className="panel-title">Color theme</h3>
-        <div className="theme-swatches" role="group" aria-label="Choose theme">
+        <div className="theme-swatches" role="group" aria-label="Choose theme" data-tourkit="theme-picker">
           {Object.values(THEMES).map((t) => (
             <button
               key={t.id}

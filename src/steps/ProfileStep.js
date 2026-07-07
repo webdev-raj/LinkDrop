@@ -6,7 +6,7 @@ export default function ProfileStep({ data, setData, goNext }) {
 
   return (
     <>
-      <header className="panel-header">
+      <header className="panel-header" data-tourkit="profile-form">
         <h2>Profile</h2>
         <p>How visitors see you at the top of your page.</p>
       </header>

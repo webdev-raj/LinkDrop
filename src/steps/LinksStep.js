@@ -43,7 +43,7 @@ export default function LinksStep({ data, setData, goNext, goPrev }) {
           onMove={moveLink}
         />
       ))}
-      <button type="button" className="add-link-btn" onClick={addLink}>
+      <button type="button" className="add-link-btn" onClick={addLink} data-tourkit="add-link-btn">
         + Add another link
       </button>
       <div className="step-nav-buttons">

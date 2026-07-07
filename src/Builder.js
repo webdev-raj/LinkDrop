@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   LINK_TYPES, DEFAULT_PAGE_DATA,
 } from './themes';
@@ -289,16 +290,12 @@ export default function Builder({ step = 'profile' }) {
     setDraftExists(true);
   }, [data]);
 
-  // Listen for popstate to update step without full reload
+  const navigate = useNavigate();
+
+  // Sync currentStep state with route step prop changes
   useEffect(() => {
-    const onPop = () => {
-      const path = window.location.pathname.replace(/\/$/, '');
-      const match = path.match(/^\/create\/(\w+)$/);
-      setCurrentStep(match ? match[1] : 'profile');
-    };
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
-  }, []);
+    setCurrentStep(step);
+  }, [step]);
 
   // Navigation helpers
   const stepIds = STEPS.map((s) => s.id);
@@ -307,10 +304,10 @@ export default function Builder({ step = 'profile' }) {
   const navigateTo = useCallback((stepId) => {
     const target = STEPS.find((s) => s.id === stepId);
     if (target) {
-      window.history.pushState(null, '', target.path);
+      navigate(target.path);
       setCurrentStep(stepId);
     }
-  }, []);
+  }, [navigate]);
 
   const goNext = useCallback(() => {
     if (currentIndex < stepIds.length - 1) {
@@ -347,7 +344,7 @@ export default function Builder({ step = 'profile' }) {
               <span>{progress}/4</span>
             </div>
           </div>
-          <nav className="studio-tabs">
+          <nav className="studio-tabs" data-tourkit="studio-steps">
             {STEPS.map((t) => (
               <button
                 key={t.id}
@@ -372,7 +369,7 @@ export default function Builder({ step = 'profile' }) {
           {currentStep === 'publish' && <PublishStep {...stepProps} />}
         </section>
 
-        <aside className="studio-preview" aria-label="Live preview">
+        <aside className="studio-preview" aria-label="Live preview" data-tourkit="live-preview">
           <div className="studio-preview__bar">
             <span className="preview-label">Live preview</span>
             <div className="device-toggle" role="group" aria-label="Preview device">

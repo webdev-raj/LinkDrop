@@ -1,0 +1,58 @@
+[
+  {
+    "title": "Welcome to LinkDrop",
+    "description": "This is your starting point. Click here to open the studio and start building your link-in-bio page in minutes.",
+    "selector": "[data-tourkit='hero-cta']",
+    "position": "bottom",
+    "url_pattern": "/"
+  },
+  {
+    "title": "Navigation Bar",
+    "description": "Use the top nav to move between the landing page and the studio. Your draft status shows up here too.",
+    "selector": "[data-tourkit='site-nav']",
+    "position": "bottom",
+    "url_pattern": null
+  },
+  {
+    "title": "Studio Step Tabs",
+    "description": "These four tabs walk you through building your page: Profile, Design, Links, and Publish. Follow them in order or jump around.",
+    "selector": "[data-tourkit='studio-steps']",
+    "position": "right",
+    "url_pattern": "/create/*"
+  },
+  {
+    "title": "Set Up Your Profile",
+    "description": "Start here — add your name, bio, and profile picture. This is what visitors see first on your page.",
+    "selector": "[data-tourkit='profile-form']",
+    "position": "bottom",
+    "url_pattern": "/create/profile"
+  },
+  {
+    "title": "Pick a Theme",
+    "description": "Choose from five color themes to set the vibe of your page. Each one looks great on both mobile and desktop.",
+    "selector": "[data-tourkit='theme-picker']",
+    "position": "bottom",
+    "url_pattern": "/create/design"
+  },
+  {
+    "title": "Add Your Links",
+    "description": "Tap this button to add links to your socials, website, or anything else. Drag to reorder them however you like.",
+    "selector": "[data-tourkit='add-link-btn']",
+    "position": "top",
+    "url_pattern": "/create/links"
+  },
+  {
+    "title": "Publish and Share",
+    "description": "When you're happy with your page, hit this button to save it and get a short shareable URL instantly.",
+    "selector": "[data-tourkit='publish-btn']",
+    "position": "top",
+    "url_pattern": "/create/publish"
+  },
+  {
+    "title": "Live Preview Panel",
+    "description": "See your page update in real time as you edit. Toggle between mobile and desktop views to check how it looks everywhere.",
+    "selector": "[data-tourkit='live-preview']",
+    "position": "left",
+    "url_pattern": "/create/*"
+  }
+]

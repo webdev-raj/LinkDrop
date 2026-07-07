@@ -8,6 +8,7 @@ export default function SiteNav({ variant = 'landing', showCta = true, hasDraft 
     <nav
       className={`site-nav ${isLanding ? 'site-nav--landing' : ''} ${isBuilder ? 'site-nav--studio' : ''}`}
       aria-label="Main"
+      data-tourkit="site-nav"
     >
       <div className="container site-nav__inner">
         {/* <BrandLogo size={isLanding ? 'md' : 'sm'} suffix="" /> */}

@@ -57,7 +57,7 @@ export default function Landing() {
                 Publish once, share a short URL. No account, no subscription.
               </p>
               <div className="drop-hero__actions">
-                <a href="/create" className="btn btn--landing-primary">Open the studio</a>
+                <a href="/create" className="btn btn--landing-primary" data-tourkit="hero-cta">Open the studio</a>
                 <a href="#features" className="btn btn--landing-ghost">See features</a>
               </div>
               <dl className="drop-stats">
